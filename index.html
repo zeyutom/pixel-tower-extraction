@@ -255,26 +255,54 @@
   #menuBtn   { left: 12px; top: 12px; width: 44px; height: 44px; background: rgba(50,60,70,0.7); border-color: rgba(150,180,200,0.7); font-size: 18px; pointer-events: auto; position: absolute; border-radius: 6px; display: none; }
   .touch-only #menuBtn { display: flex; }
 
-  /* 手机版 HUD 紧凑 */
-  @media (max-width: 768px), (pointer: coarse) {
+  /* 触屏通用：紧凑 HUD */
+  @media (pointer: coarse) {
     #hud {
-      padding: 6px 8px;
-      flex-wrap: wrap;
+      padding: 4px 6px;
       gap: 4px;
       font-size: 10px;
       pointer-events: none;
+      flex-wrap: nowrap;
+      align-items: stretch;
     }
-    .panel { padding: 4px 6px; }
-    .bar { width: 110px; height: 8px; margin: 2px 0; }
-    .label { font-size: 9px; letter-spacing: 0; }
-    .stats { gap: 6px; font-size: 10px; margin-top: 2px; }
-    .key { width: 16px; height: 11px; font-size: 9px; }
-    #hud .panel:nth-child(1) { order: 1; flex: 0 0 auto; }
-    #hud .panel:nth-child(2) { order: 3; flex: 1 1 100%; display: flex; justify-content: space-around; padding: 3px 6px; min-width: 0 !important; }
-    #hud .panel:nth-child(2) > div { margin: 0 !important; font-size: 11px; }
-    #hud .panel:nth-child(2) .label { display: inline; }
-    #hud .panel:nth-child(3) { order: 2; flex: 0 0 auto; text-align: right; }
-    .touch-only #inv { top: 90px; }
+    .panel { padding: 3px 5px; min-width: 0; }
+    .bar { width: 80px; height: 6px; margin: 1px 0; }
+    .label { font-size: 8px; letter-spacing: 0; line-height: 1.2; }
+    .stats { gap: 4px; font-size: 9px; margin-top: 1px; }
+    .key { width: 13px; height: 10px; font-size: 8px; }
+    .keys { margin-top: 2px; gap: 2px; }
+    #hud .panel:nth-child(1) { flex: 0 1 auto; max-width: 36%; }
+    #hud .panel:nth-child(2) { flex: 1 1 auto; min-width: 0 !important; padding: 3px 5px; font-size: 10px; }
+    #hud .panel:nth-child(2) > div { margin: 1px 0; }
+    #hud .panel:nth-child(3) { flex: 0 1 auto; max-width: 32%; }
+    #hud .panel:nth-child(3) > div { margin: 1px 0; font-size: 10px; }
+    #hud .panel:nth-child(3) .val { font-size: 12px; }
+
+    .touch-only #inv {
+      top: auto; bottom: 12px;
+      left: 50%; transform: translateX(-50%);
+      padding: 3px; gap: 3px;
+      background: rgba(8,12,18,0.7);
+    }
+    .touch-only .slot { width: 38px; height: 38px; }
+    .touch-only .slot .name { font-size: 7px; }
+    .touch-only .slot .num { font-size: 9px; }
+
+    /* 触屏按钮重新调整 */
+    #joystick { left: 14px; bottom: 14px; width: 120px; height: 120px; }
+    #joyKnob { left: 38px; top: 38px; width: 44px; height: 44px; }
+    #fireBtn   { right: 18px;  bottom: 18px;  width: 100px; height: 100px; font-size: 14px; }
+    #useBtn    { right: 130px; bottom: 92px;  width: 72px;  height: 72px; }
+    #dropBtn   { right: 130px; bottom: 18px;  width: 60px;  height: 60px; font-size: 11px; }
+    #menuBtn   { left: auto; right: 14px; top: 14px; width: 38px; height: 38px; font-size: 18px; }
+  }
+  /* 极窄横屏 (iPhone SE 横屏类) */
+  @media (pointer: coarse) and (max-height: 380px) {
+    #hud { padding: 3px 4px; }
+    .bar { width: 65px; height: 5px; }
+    .label { font-size: 7px; }
+    .touch-only .slot { width: 32px; height: 32px; }
+    .touch-only #inv { padding: 2px; gap: 2px; bottom: 8px; }
   }
   /* 竖屏提示 */
   #portraitHint {
@@ -332,8 +360,8 @@
       <div class="label">最高层 BEST</div>
       <div class="val" id="bestFloor">1</div>
       <div style="margin-top:3px;">
-        <span class="label">弹药</span>
-        <span class="val" id="ammo">30 / 90</span>
+        <span class="label">武器强化</span><br>
+        <span class="val" id="ammo" style="font-size:11px;"></span>
       </div>
     </div>
   </div>
@@ -349,8 +377,8 @@
 
   <div id="help">
     <kbd>WASD</kbd> 移动 · <kbd>Shift</kbd> 冲刺 · <kbd>鼠标</kbd> 瞄准/射击<br>
-    <kbd>R</kbd> 换弹 · <kbd>E</kbd> 拾取/交互 · <kbd>1-6</kbd> 切换 · <kbd>Q</kbd> 丢弃<br>
-    <span style="color:#5db080;">绿楼梯=撤离 · 红楼梯=上一层(更难) · 钥匙开门</span>
+    <kbd>E</kbd> 拾取/交互 · <kbd>1-6</kbd> 切换 · <kbd>Q</kbd> 丢弃<br>
+    <span style="color:#5db080;">绿楼梯=撤离 · 红楼梯=上一层 · 钥匙开门 · 弹药无限</span>
   </div>
 
   <div id="menuBtn">≡</div>
@@ -359,7 +387,7 @@
     <div id="joystick"><div id="joyKnob"></div></div>
     <div id="fireBtn" class="tbtn">射击</div>
     <div id="useBtn" class="tbtn"><div>拾取/<br>撤离</div></div>
-    <div id="reloadBtn" class="tbtn">换弹</div>
+    <div id="reloadBtn" class="tbtn" style="display:none;">换弹</div>
     <div id="dropBtn" class="tbtn">丢弃</div>
   </div>
 
@@ -682,24 +710,38 @@ const player = {
 };
 
 const WEAPONS = {
-  fist:    { name:'拳头',   dmg: 15, fireRate: 0.5, mag: 0, ammoType: null,  spread: 0,    range: 18, melee: true },
-  pistol:  { name:'手枪',   dmg: 18, fireRate: 0.18, mag: 12, ammoType:'9mm', spread: 0.05, range: 220, bulletSpd: 320 },
-  smg:     { name:'冲锋枪', dmg: 14, fireRate: 0.07, mag: 30, ammoType:'9mm', spread: 0.10, range: 200, bulletSpd: 360 },
-  rifle:   { name:'步枪',   dmg: 32, fireRate: 0.13, mag: 30, ammoType:'5.56', spread: 0.04, range: 320, bulletSpd: 460 },
-  shotgun: { name:'霰弹枪', dmg: 12, fireRate: 0.7,  mag: 6,  ammoType:'12ga', spread: 0.20, range: 130, bulletSpd: 280, pellets: 7 },
-  sniper:  { name:'狙击枪', dmg: 95, fireRate: 1.1,  mag: 5,  ammoType:'7.62', spread: 0.005, range: 480, bulletSpd: 640 },
-  laser:   { name:'激光枪', dmg: 22, fireRate: 0.05, mag: 60, ammoType:'cell', spread: 0.02, range: 380, bulletSpd: 720 },
+  fist:    { name:'拳头',   dmg: 15, fireRate: 0.5,  spread: 0,    range: 18,  melee: true },
+  pistol:  { name:'手枪',   dmg: 18, fireRate: 0.18, spread: 0.05, range: 220, bulletSpd: 320 },
+  smg:     { name:'冲锋枪', dmg: 14, fireRate: 0.07, spread: 0.10, range: 200, bulletSpd: 360 },
+  rifle:   { name:'步枪',   dmg: 32, fireRate: 0.13, spread: 0.04, range: 320, bulletSpd: 460 },
+  shotgun: { name:'霰弹枪', dmg: 12, fireRate: 0.7,  spread: 0.20, range: 130, bulletSpd: 280, pellets: 7 },
+  sniper:  { name:'狙击枪', dmg: 95, fireRate: 1.1,  spread: 0.005, range: 480, bulletSpd: 640 },
+  laser:   { name:'激光枪', dmg: 22, fireRate: 0.05, spread: 0.02, range: 380, bulletSpd: 720 },
+};
+
+// 局内武器 buff 累加（撤离/死亡清零）
+let runBuffs = { dmg: 0, fireRate: 0, spd: 0, pierce: 0, crit: 0 };
+const BUFF_META = {
+  dmg:      { label:'伤害',  color:'#e74c3c', sym:'⚔', short:'DMG' },
+  fireRate: { label:'射速',  color:'#f5b041', sym:'⚡', short:'RATE' },
+  spd:      { label:'弹速',  color:'#5dade2', sym:'➤',  short:'SPD' },
+  pierce:   { label:'穿透',  color:'#c39bd3', sym:'⫸',  short:'PRC' },
+  crit:     { label:'暴击',  color:'#ff7f50', sym:'★',  short:'CRT' },
 };
 
 // 战利品池（普通刷新用）
 const LOOT_TABLE = [
   ['现金', 1, 50, 'cash', null],
   ['现金', 1, 80, 'cash', null],
-  ['手枪弹', 1, 30, 'ammo', { type:'9mm', count: 18 }],
   ['绷带', 1, 40, 'med', { heal: 35 }],
   ['黄钥匙', 1, 0, 'key', { color:'y' }],
-  ['步枪弹', 2, 80, 'ammo', { type:'5.56', count: 30 }],
-  ['霰弹', 2, 70, 'ammo', { type:'12ga', count: 12 }],
+  // 武器 buff 强化（局内）
+  ['速射模块', 1, 30, 'buff', { kind:'fireRate', val: 0.06 }],
+  ['强化弹头', 2, 80, 'buff', { kind:'dmg', val: 0.08 }],
+  ['高速火药', 2, 70, 'buff', { kind:'spd', val: 0.10 }],
+  ['暴击芯片', 3, 140, 'buff', { kind:'crit', val: 0.05 }],
+  ['穿透弹芯', 3, 200, 'buff', { kind:'pierce', val: 1 }],
+  // 武器
   ['手枪', 2, 200, 'weapon', { weapon:'pistol' }],
   ['护甲板', 2, 160, 'armor', { armor: 60 }],
   ['红宝石', 2, 0, 'gem', { kind:'atk', val: 1 }],
@@ -707,7 +749,6 @@ const LOOT_TABLE = [
   ['冲锋枪', 3, 480, 'weapon', { weapon:'smg' }],
   ['霰弹枪', 3, 520, 'weapon', { weapon:'shotgun' }],
   ['步枪', 3, 800, 'weapon', { weapon:'rifle' }],
-  ['7.62弹', 3, 140, 'ammo', { type:'7.62', count: 15 }],
   ['急救包', 3, 280, 'med', { heal: 100 }],
   ['金条', 3, 600, 'cash', null],
   ['蓝宝石', 3, 0, 'gem', { kind:'def', val: 1 }],
@@ -721,9 +762,9 @@ const LOOT_TABLE = [
 
 // 高级宝箱（门后）刷新用
 const PREMIUM_LOOT = {
-  y: [ // 黄门后
+  y: [
     ['护甲板', 2, 160, 'armor', { armor: 60 }],
-    ['步枪弹', 2, 80, 'ammo', { type:'5.56', count: 30 }],
+    ['强化弹头', 2, 80, 'buff', { kind:'dmg', val: 0.08 }],
     ['现金堆', 2, 200, 'cash', null],
     ['红宝石', 2, 0, 'gem', { kind:'atk', val: 1 }],
   ],
@@ -731,7 +772,7 @@ const PREMIUM_LOOT = {
     ['步枪', 3, 800, 'weapon', { weapon:'rifle' }],
     ['急救包', 3, 280, 'med', { heal: 100 }],
     ['金条', 3, 600, 'cash', null],
-    ['绿宝石', 2, 0, 'gem', { kind:'hp', val: 5 }],
+    ['暴击芯片', 3, 140, 'buff', { kind:'crit', val: 0.05 }],
     ['蓝宝石', 3, 0, 'gem', { kind:'def', val: 1 }],
   ],
   r: [
@@ -739,6 +780,7 @@ const PREMIUM_LOOT = {
     ['激光枪', 4, 2400, 'weapon', { weapon:'laser' }],
     ['钻石', 4, 1500, 'cash', null],
     ['秘密文件', 4, 2200, 'cash', null],
+    ['穿透弹芯', 4, 200, 'buff', { kind:'pierce', val: 1 }],
   ],
 };
 
@@ -748,7 +790,6 @@ const RARITY_COLOR = ['#000', '#bbb', '#5dade2', '#c39bd3', '#f5b041', '#ff7f50'
 const inv = [];
 const INV_SIZE = 6;
 let equippedIdx = 0;
-let stockAmmo = { '9mm': 24, '5.56': 0, '12ga': 0, '7.62': 0, 'cell': 0 };
 
 let bullets = [];
 let enemies = [];
@@ -762,8 +803,6 @@ let extractTimer = 0;
 let muzzleFlash = 0;
 
 let fireCooldown = 0;
-let reloading = 0;
-let weaponMag = 12;
 let weaponInst = WEAPONS.pistol;
 
 function getEquippedItem(){ return inv[equippedIdx] || null; }
@@ -771,69 +810,52 @@ function refreshEquipped(){
   const it = getEquippedItem();
   if (it && it.kind === 'weapon'){
     weaponInst = WEAPONS[it.payload.weapon];
-    if (it.payload.mag === undefined) it.payload.mag = weaponInst.mag;
-    weaponMag = it.payload.mag;
   } else {
     weaponInst = WEAPONS.fist;
-    weaponMag = 0;
   }
   updateHUD();
   renderInv();
 }
 function selectSlot(i){
   if (i < 0 || i >= INV_SIZE) return;
-  const cur = getEquippedItem();
-  if (cur && cur.kind === 'weapon') cur.payload.mag = weaponMag;
   equippedIdx = i;
   refreshEquipped();
 }
 
-function tryReload(){
-  if (!weaponInst.ammoType || reloading > 0) return;
-  if (weaponMag >= weaponInst.mag) return;
-  if ((stockAmmo[weaponInst.ammoType]||0) <= 0) { showMsg('无弹药', 800); return; }
-  reloading = 1.3;
-}
-function finishReload(){
-  const need = weaponInst.mag - weaponMag;
-  const have = stockAmmo[weaponInst.ammoType] || 0;
-  const take = Math.min(need, have);
-  weaponMag += take;
-  stockAmmo[weaponInst.ammoType] = have - take;
-  const cur = getEquippedItem();
-  if (cur && cur.kind === 'weapon') cur.payload.mag = weaponMag;
-  updateHUD();
-}
+// 弹药/换弹已废除 — 保留 noop 以兼容按键绑定
+function tryReload(){ /* no-op: 弹药已无限 */ }
 
 function fire(){
-  if (fireCooldown > 0 || reloading > 0) return;
+  if (fireCooldown > 0) return;
+  const dmgMul = (1 + pAtk * 0.15) * (1 + runBuffs.dmg);
+  const isCrit = Math.random() < runBuffs.crit;
+  const finalDmg = weaponInst.dmg * dmgMul * (isCrit ? 2 : 1);
+
   if (weaponInst.melee){
     const tx = player.x + Math.cos(player.facing) * 14;
     const ty = player.y + Math.sin(player.facing) * 14;
     for (const e of enemies){
       const d = Math.hypot(e.x-tx, e.y-ty);
-      if (d < e.r + 6) hitEnemy(e, applyAtk(weaponInst.dmg), player.facing);
+      if (d < e.r + 6) hitEnemy(e, finalDmg, player.facing, isCrit);
     }
-    fireCooldown = weaponInst.fireRate;
+    fireCooldown = weaponInst.fireRate / (1 + runBuffs.fireRate);
     return;
   }
-  if (weaponMag <= 0) { tryReload(); return; }
-  weaponMag--;
-  const cur = getEquippedItem();
-  if (cur && cur.kind === 'weapon') cur.payload.mag = weaponMag;
-  fireCooldown = weaponInst.fireRate;
+  fireCooldown = weaponInst.fireRate / (1 + runBuffs.fireRate);
   muzzleFlash = 0.06;
   player.recoil = Math.min(player.recoil + 0.04, 0.2);
 
   const pellets = weaponInst.pellets || 1;
+  const sp = weaponInst.bulletSpd * (1 + runBuffs.spd);
   for (let i=0; i<pellets; i++){
     const ang = player.facing + (Math.random()-0.5) * weaponInst.spread * 2;
-    const sp = weaponInst.bulletSpd;
     bullets.push({
       x: player.x + Math.cos(ang)*8, y: player.y + Math.sin(ang)*8,
       vx: Math.cos(ang)*sp, vy: Math.sin(ang)*sp,
-      dmg: applyAtk(weaponInst.dmg), life: weaponInst.range / sp,
-      owner: 'player'
+      dmg: finalDmg, life: weaponInst.range / sp,
+      owner: 'player',
+      pierce: runBuffs.pierce, hit: new Set(),
+      crit: isCrit,
     });
   }
   for (let i=0; i<3; i++)
@@ -841,17 +863,17 @@ function fire(){
   updateHUD();
 }
 
-function applyAtk(base){ return base * (1 + pAtk * 0.15); }
-
-function hitEnemy(e, dmg, dir){
+function hitEnemy(e, dmg, dir, isCrit){
   const final = Math.max(1, dmg - (e.def||0));
   e.hp -= final;
   e.flash = 0.1;
   e.knockback = { x: Math.cos(dir)*40, y: Math.sin(dir)*40 };
   e.alert = 6;
-  damageNums.push({ x: e.x, y: e.y - e.r, val: final|0, life: 0.7, vy: -30, color:'#ff5555' });
-  for (let i=0; i<5; i++)
-    particles.push({ x: e.x, y: e.y, vx:(Math.random()-0.5)*120, vy:(Math.random()-0.5)*120, life: 0.4, c:'#c0392b', s: 2 });
+  damageNums.push({ x: e.x, y: e.y - e.r, val: final|0, life: 0.7, vy: -30,
+    color: isCrit ? '#ff7f50' : '#ff5555',
+    big: isCrit });
+  for (let i=0; i<(isCrit?9:5); i++)
+    particles.push({ x: e.x, y: e.y, vx:(Math.random()-0.5)*120, vy:(Math.random()-0.5)*120, life: 0.4, c: isCrit ? '#ff7f50' : '#c0392b', s: 2 });
   if (e.hp <= 0) killEnemy(e);
 }
 
@@ -1082,11 +1104,14 @@ function pickup(item){
     showMsg(`+ ¥${item.value}`, 700, RARITY_COLOR[item.rarity]);
     updateHUD(); return;
   }
-  if (item.kind === 'ammo'){
-    stockAmmo[item.payload.type] = (stockAmmo[item.payload.type]||0) + item.payload.count;
+  if (item.kind === 'buff'){
+    const k = item.payload.kind;
+    runBuffs[k] += item.payload.val;
     runValue += item.value;
     lootCount++;
-    showMsg(`+ ${item.payload.count} ${item.payload.type}`, 700, '#5dade2');
+    const meta = BUFF_META[k];
+    const text = k === 'pierce' ? `${meta.label} +${item.payload.val}` : `${meta.label} +${(item.payload.val*100)|0}%`;
+    showMsg(text, 800, meta.color);
     updateHUD(); return;
   }
   if (item.kind === 'armor'){
@@ -1164,7 +1189,7 @@ function goUpFloor(){
   currentFloor++;
   if (currentFloor > bestFloor) bestFloor = currentFloor;
   save();
-  // 保留 inv / stockAmmo / hp
+  // 保留 inv / runBuffs / hp
   startFloor(false);
   showMsg(`进入第 ${currentFloor} 层`, 1500, '#f5b041');
 }
@@ -1208,18 +1233,21 @@ function generateShopItems(){
   const w = wPool[2 + (Math.random()*4)|0];
   const wSpec = WEAPONS[w];
   items.push({ name: wSpec.name, desc: `武器 · 伤害 ${wSpec.dmg}`, price: 600 + currentFloor*100, action: ()=>{
-    addItemToInv({ name: wSpec.name, rarity: 3, value: 0, kind:'weapon', payload:{ weapon:w, mag: wSpec.mag } });
+    addItemToInv({ name: wSpec.name, rarity: 3, value: 0, kind:'weapon', payload:{ weapon:w } });
   }, rarity: 3 });
   // 钥匙
   items.push({ name:'黄钥匙', desc:'开启黄门', price: 200, rarity: 1, action: ()=>{ pKeys.y++; updateHUD(); save(); } });
   items.push({ name:'蓝钥匙', desc:'开启蓝门', price: 600, rarity: 3, action: ()=>{ pKeys.b++; updateHUD(); save(); } });
   if (currentFloor >= 5)
     items.push({ name:'红钥匙', desc:'开启红门', price: 1500, rarity: 4, action: ()=>{ pKeys.r++; updateHUD(); save(); } });
-  // 弹药
-  items.push({ name:'步枪弹 x60', desc:'5.56mm', price: 200, rarity: 2, action: ()=>{ stockAmmo['5.56'] += 60; updateHUD(); } });
-  items.push({ name:'霰弹 x24', desc:'12 gauge', price: 240, rarity: 2, action: ()=>{ stockAmmo['12ga'] += 24; updateHUD(); } });
+  // 武器 Buff 强化（局内）
+  items.push({ name:'强化弹头', desc:'局内伤害 +10%', price: 250, rarity: 2, action: ()=>{ runBuffs.dmg += 0.10; updateHUD(); } });
+  items.push({ name:'速射模块', desc:'局内射速 +10%', price: 220, rarity: 2, action: ()=>{ runBuffs.fireRate += 0.10; updateHUD(); } });
+  items.push({ name:'高速火药', desc:'局内弹速 +15%', price: 180, rarity: 2, action: ()=>{ runBuffs.spd += 0.15; updateHUD(); } });
+  if (currentFloor >= 3)
+    items.push({ name:'暴击芯片', desc:'局内暴击率 +8%', price: 600, rarity: 3, action: ()=>{ runBuffs.crit += 0.08; updateHUD(); } });
   if (currentFloor >= 4)
-    items.push({ name:'7.62弹 x30', desc:'狙击弹', price: 380, rarity: 3, action: ()=>{ stockAmmo['7.62'] += 30; updateHUD(); } });
+    items.push({ name:'穿透弹芯', desc:'局内子弹穿透 +1', price: 900, rarity: 4, action: ()=>{ runBuffs.pierce += 1; updateHUD(); } });
   // 药品
   items.push({ name:'急救包', desc:'恢复 100 HP', price: 400, rarity: 3, action: ()=>{
     addItemToInv({ name:'急救包', rarity:3, value:0, kind:'med', payload:{heal:100} });
@@ -1255,8 +1283,9 @@ function addItemToInv(item){
 
 function buyShopItem(it){
   if (bank < it.price){ showMsg('金币不足', 700); return; }
-  const noSlotNeeded = ['钥匙','宝石','弹','护甲'].some(k => it.name.includes(k));
-  if (!noSlotNeeded){
+  // 占栏位的只有：武器、医疗
+  const needsSlot = ['手枪','冲锋枪','步枪','霰弹枪','狙击枪','激光枪','急救包'].some(k => it.name.includes(k));
+  if (needsSlot){
     let hasSlot = false;
     for (let i=0; i<INV_SIZE; i++) if (!inv[i]) { hasSlot = true; break; }
     if (!hasSlot){ showMsg('背包已满', 800); return; }
@@ -1265,7 +1294,6 @@ function buyShopItem(it){
   it.action();
   save(); updateHUD();
   showMsg(`购买 ${it.name}`, 700, '#5db080');
-  // 刷新商店面板
   shopOpen = false; openShop();
 }
 
@@ -1318,11 +1346,6 @@ function update(dt){
   fireCooldown -= dt;
   if (mouse.down) fire();
 
-  if (reloading > 0){
-    reloading -= dt;
-    if (reloading <= 0) finishReload();
-  }
-
   if (player.invuln > 0) player.invuln -= dt;
   if (muzzleFlash > 0) muzzleFlash -= dt;
 
@@ -1340,9 +1363,16 @@ function update(dt){
     b.x = nx; b.y = ny;
     if (b.owner === 'player'){
       for (const e of enemies){
+        if (b.hit && b.hit.has(e)) continue;
         if (Math.hypot(e.x - b.x, e.y - b.y) < e.r + 2){
-          hitEnemy(e, b.dmg, Math.atan2(b.vy, b.vx));
-          b.life = 0; break;
+          hitEnemy(e, b.dmg, Math.atan2(b.vy, b.vx), b.crit);
+          if (b.hit) b.hit.add(e);
+          if ((b.pierce|0) > 0){
+            b.pierce--;
+          } else {
+            b.life = 0;
+            break;
+          }
         }
       }
     } else {
@@ -1575,8 +1605,8 @@ function render(){
 
   for (const d of damageNums){
     ctx.fillStyle = d.color;
-    ctx.font = 'bold 10px Courier New';
-    ctx.fillText(d.val, (d.x - camX - 4)|0, (d.y - camY)|0);
+    ctx.font = d.big ? 'bold 14px Courier New' : 'bold 10px Courier New';
+    ctx.fillText(d.big ? d.val + '!' : d.val, (d.x - camX - 4)|0, (d.y - camY)|0);
   }
 
   // 提示
@@ -1657,15 +1687,6 @@ function render(){
     }
   }
 
-  if (reloading > 0){
-    ctx.fillStyle = '#fff';
-    ctx.font = '11px Courier New';
-    ctx.fillText('装填中...', px - 22, py + 18);
-    ctx.fillStyle = '#3a3a3a';
-    ctx.fillRect(px - 16, py + 20, 32, 3);
-    ctx.fillStyle = '#5db080';
-    ctx.fillRect(px - 16, py + 20, 32 * (1 - reloading/1.3), 3);
-  }
 }
 
 function drawTile(x, y, t, tx, ty){
@@ -1915,11 +1936,15 @@ function updateHUD(){
   document.getElementById('bank').textContent = bank;
   document.getElementById('floor').textContent = currentFloor;
   document.getElementById('bestFloor').textContent = bestFloor;
-  if (weaponInst.ammoType){
-    document.getElementById('ammo').textContent = `${weaponMag} / ${stockAmmo[weaponInst.ammoType]||0}`;
-  } else {
-    document.getElementById('ammo').textContent = '近战';
-  }
+  // Buff 显示（替换原弹药）
+  const ammoEl = document.getElementById('ammo');
+  const parts = [];
+  if (runBuffs.dmg)      parts.push(`<span style="color:${BUFF_META.dmg.color}">⚔+${(runBuffs.dmg*100)|0}%</span>`);
+  if (runBuffs.fireRate) parts.push(`<span style="color:${BUFF_META.fireRate.color}">⚡+${(runBuffs.fireRate*100)|0}%</span>`);
+  if (runBuffs.spd)      parts.push(`<span style="color:${BUFF_META.spd.color}">➤+${(runBuffs.spd*100)|0}%</span>`);
+  if (runBuffs.crit)     parts.push(`<span style="color:${BUFF_META.crit.color}">★${(runBuffs.crit*100)|0}%</span>`);
+  if (runBuffs.pierce)   parts.push(`<span style="color:${BUFF_META.pierce.color}">⫸${runBuffs.pierce}</span>`);
+  ammoEl.innerHTML = parts.length ? parts.join(' ') : '<span style="color:#666">无强化</span>';
   // 钥匙
   const ky = document.getElementById('ky');
   const kb = document.getElementById('kb');
@@ -2002,8 +2027,8 @@ function startFloor(freshRun){
     bullets = []; particles = []; damageNums = [];
     killCount = 0; lootCount = 0; runValue = 0;
     for (let i=0; i<INV_SIZE; i++) inv[i] = null;
-    inv[0] = { name:'手枪', rarity:1, value:0, kind:'weapon', payload:{ weapon:'pistol', mag: 12 } };
-    stockAmmo = { '9mm': 36, '5.56': 0, '12ga': 0, '7.62': 0, 'cell': 0 };
+    inv[0] = { name:'手枪', rarity:1, value:0, kind:'weapon', payload:{ weapon:'pistol' } };
+    runBuffs = { dmg: 0, fireRate: 0, spd: 0, pierce: 0, crit: 0 };
     equippedIdx = 0;
     refreshEquipped();
   }
