@@ -32,45 +32,84 @@
     box-shadow: 0 0 40px rgba(0,255,180,0.15), 0 0 2px rgba(255,255,255,0.2);
     cursor: crosshair;
   }
+  /* 极简 HUD — 边缘半透明、零边框、安全区适配 */
   #hud {
-    position: absolute; left: 0; top: 0; right: 0;
-    padding: 10px 16px;
-    pointer-events: none;
-    display: flex; justify-content: space-between; align-items: flex-start;
-    font-size: 12px;
-    text-shadow: 1px 1px 0 #000;
-    gap: 8px;
-  }
-  .panel {
-    background: rgba(8,12,18,0.82);
-    border: 1px solid rgba(120,180,140,0.35);
+    position: absolute;
+    top: env(safe-area-inset-top, 0);
+    left: env(safe-area-inset-left, 0);
+    right: env(safe-area-inset-right, 0);
     padding: 6px 10px;
-    border-radius: 2px;
-  }
-  .bar {
-    width: 160px; height: 10px;
-    background: #111; border: 1px solid #444;
-    margin: 3px 0; position: relative;
-  }
-  .bar > div { height: 100%; transition: width .15s; }
-  .hp > div { background: linear-gradient(90deg,#c0392b,#e74c3c); }
-  .ar > div { background: linear-gradient(90deg,#3498db,#5dade2); }
-  .stam > div { background: linear-gradient(90deg,#27ae60,#52be80); }
-  .label { color:#9ab; font-size:10px; letter-spacing:1px; }
-  .val { color: #fff; font-weight: bold; }
-  .stats {
-    display: flex; gap: 10px; margin-top: 4px;
+    pointer-events: none;
+    display: grid;
+    grid-template-columns: minmax(0,1fr) auto minmax(0,1fr);
+    align-items: start;
+    gap: 8px;
     font-size: 11px;
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.85);
+    color: rgba(255,255,255,0.78);
+    letter-spacing: 0.5px;
   }
-  .stat { display:flex; align-items:center; gap:3px; }
-  .stat .k { color:#9ab; }
-  .stat .v { color:#fff; font-weight:bold; }
-  .keys { display:flex; gap:4px; margin-top:4px; }
-  .key { width: 18px; height: 12px; border:1px solid #333; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:bold; color:#000; }
-  .ky { background:#f5b041; }
-  .kb { background:#5dade2; }
-  .kr { background:#e74c3c; color:#fff; }
-  .key.dim { opacity: 0.25; }
+  .hud-tl, .hud-tr {
+    display: flex; flex-wrap: wrap; gap: 4px 8px;
+    align-items: center;
+  }
+  .hud-tl { justify-content: flex-start; }
+  .hud-tr { justify-content: flex-end; }
+  .hud-tc {
+    display: flex; flex-direction: column; align-items: center;
+    min-width: 0; width: 180px;
+  }
+  .floor-tag {
+    color: #fff; font-weight: bold; font-size: 14px;
+    letter-spacing: 1px;
+  }
+  .bank-tag { color: rgba(245,176,65,0.85); font-weight: bold; }
+  .runval-tag { color: rgba(80,255,140,0.85); font-size: 10px; }
+  .runval-tag.zero { display: none; }
+  .dim { color: rgba(180,200,210,0.5); font-size: 10px; margin-left: 6px; }
+  .dim span { color: rgba(255,255,255,0.85); margin-left: 2px; }
+
+  .bar {
+    width: 100%; height: 5px;
+    background: rgba(0,0,0,0.5);
+    margin: 1px 0;
+    position: relative;
+    border-radius: 1px;
+    overflow: hidden;
+  }
+  .bar.thin { height: 2px; }
+  .bar > div { height: 100%; transition: width .15s; }
+  .hp > div   { background: linear-gradient(90deg,#c0392b,#e74c3c); }
+  .ar > div   { background: linear-gradient(90deg,#3498db,#5dade2); }
+  .stam > div { background: linear-gradient(90deg,#27ae60,#52be80); opacity: 0.7; }
+  .hp-meta {
+    display: flex; justify-content: space-between; align-items: center;
+    width: 100%; font-size: 10px; line-height: 1.1; margin-top: 1px;
+  }
+  .hp-meta > span:first-child { color: rgba(255,255,255,0.9); font-weight: bold; }
+
+  .keys-wrap { display: flex; gap: 4px; }
+  .key-pill {
+    display: inline-flex; align-items: center;
+    padding: 1px 5px;
+    font-size: 10px; font-weight: bold;
+    border-radius: 8px;
+    background: rgba(0,0,0,0.4);
+  }
+  .key-pill.kp-y { color: #f5b041; }
+  .key-pill.kp-b { color: #5dade2; }
+  .key-pill.kp-r { color: #e74c3c; }
+  .key-pill .ct { margin-left: 2px; color: #fff; }
+
+  .buffs-wrap { display: inline-flex; gap: 5px; align-items: center; }
+  .buff-pill {
+    display: inline-flex; align-items: center;
+    padding: 1px 4px;
+    font-size: 10px;
+    border-radius: 6px;
+    background: rgba(0,0,0,0.35);
+    line-height: 1.3;
+  }
   #inv {
     position: absolute; left: 50%; bottom: 12px;
     transform: translateX(-50%);
@@ -120,8 +159,11 @@
     align-items: center; justify-content: center;
     flex-direction: column;
     z-index: 100;
-    padding: 20px;
+    padding: calc(env(safe-area-inset-top, 0) + 16px) calc(env(safe-area-inset-right, 0) + 16px) calc(env(safe-area-inset-bottom, 0) + 16px) calc(env(safe-area-inset-left, 0) + 16px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
+  #overlay > * { flex-shrink: 0; max-width: 100%; }
   #overlay h1 {
     font-size: 42px; letter-spacing: 6px;
     color: #fff;
@@ -255,54 +297,53 @@
   #menuBtn   { left: 12px; top: 12px; width: 44px; height: 44px; background: rgba(50,60,70,0.7); border-color: rgba(150,180,200,0.7); font-size: 18px; pointer-events: auto; position: absolute; border-radius: 6px; display: none; }
   .touch-only #menuBtn { display: flex; }
 
-  /* 触屏通用：紧凑 HUD */
+  /* 触屏：HUD 更紧凑 */
   @media (pointer: coarse) {
-    #hud {
-      padding: 4px 6px;
-      gap: 4px;
-      font-size: 10px;
-      pointer-events: none;
-      flex-wrap: nowrap;
-      align-items: stretch;
-    }
-    .panel { padding: 3px 5px; min-width: 0; }
-    .bar { width: 80px; height: 6px; margin: 1px 0; }
-    .label { font-size: 8px; letter-spacing: 0; line-height: 1.2; }
-    .stats { gap: 4px; font-size: 9px; margin-top: 1px; }
-    .key { width: 13px; height: 10px; font-size: 8px; }
-    .keys { margin-top: 2px; gap: 2px; }
-    #hud .panel:nth-child(1) { flex: 0 1 auto; max-width: 36%; }
-    #hud .panel:nth-child(2) { flex: 1 1 auto; min-width: 0 !important; padding: 3px 5px; font-size: 10px; }
-    #hud .panel:nth-child(2) > div { margin: 1px 0; }
-    #hud .panel:nth-child(3) { flex: 0 1 auto; max-width: 32%; }
-    #hud .panel:nth-child(3) > div { margin: 1px 0; font-size: 10px; }
-    #hud .panel:nth-child(3) .val { font-size: 12px; }
+    #hud { padding: 4px 6px; font-size: 10px; gap: 4px; }
+    .floor-tag { font-size: 13px; }
+    .hud-tc { width: 130px; }
+    .bar { height: 4px; }
+    .bar.thin { height: 2px; }
+    .hp-meta { font-size: 9px; }
+    .dim { font-size: 9px; margin-left: 4px; }
+    .key-pill, .buff-pill { font-size: 9px; padding: 0 4px; }
 
     .touch-only #inv {
-      top: auto; bottom: 12px;
+      top: auto; bottom: 8px;
       left: 50%; transform: translateX(-50%);
-      padding: 3px; gap: 3px;
-      background: rgba(8,12,18,0.7);
+      padding: 2px; gap: 2px;
+      background: rgba(8,12,18,0.55);
+      border: none;
     }
-    .touch-only .slot { width: 38px; height: 38px; }
-    .touch-only .slot .name { font-size: 7px; }
-    .touch-only .slot .num { font-size: 9px; }
+    .touch-only .slot { width: 34px; height: 34px; }
+    .touch-only .slot .name { font-size: 6px; }
+    .touch-only .slot .num { font-size: 8px; }
 
-    /* 触屏按钮重新调整 */
-    #joystick { left: 14px; bottom: 14px; width: 120px; height: 120px; }
-    #joyKnob { left: 38px; top: 38px; width: 44px; height: 44px; }
-    #fireBtn   { right: 18px;  bottom: 18px;  width: 100px; height: 100px; font-size: 14px; }
-    #useBtn    { right: 130px; bottom: 92px;  width: 72px;  height: 72px; }
-    #dropBtn   { right: 130px; bottom: 18px;  width: 60px;  height: 60px; font-size: 11px; }
-    #menuBtn   { left: auto; right: 14px; top: 14px; width: 38px; height: 38px; font-size: 18px; }
+    /* 触屏按钮 */
+    #joystick { left: 12px; bottom: 12px; width: 110px; height: 110px; opacity: 0.85; }
+    #joyKnob { left: 33px; top: 33px; width: 44px; height: 44px; }
+    #fireBtn   { right: 16px;  bottom: 16px;  width: 90px;  height: 90px; font-size: 14px; opacity: 0.9; }
+    #useBtn    { right: 116px; bottom: 78px;  width: 64px;  height: 64px; opacity: 0.9; }
+    #dropBtn   { right: 116px; bottom: 16px;  width: 54px;  height: 54px; font-size: 11px; opacity: 0.85; }
+    #menuBtn   { left: auto; right: 12px; top: env(safe-area-inset-top, 8px); width: 34px; height: 34px; font-size: 16px; }
   }
-  /* 极窄横屏 (iPhone SE 横屏类) */
-  @media (pointer: coarse) and (max-height: 380px) {
+  /* 极窄横屏 (iPhone SE / 微信浏览器) */
+  @media (pointer: coarse) and (max-height: 400px) {
     #hud { padding: 3px 4px; }
-    .bar { width: 65px; height: 5px; }
-    .label { font-size: 7px; }
-    .touch-only .slot { width: 32px; height: 32px; }
-    .touch-only #inv { padding: 2px; gap: 2px; bottom: 8px; }
+    .floor-tag { font-size: 12px; }
+    .hud-tc { width: 110px; }
+    .touch-only .slot { width: 30px; height: 30px; }
+    .touch-only #inv { padding: 1px; gap: 1px; bottom: 6px; }
+    #joystick { width: 95px; height: 95px; }
+    #joyKnob { left: 28px; top: 28px; width: 38px; height: 38px; }
+    #fireBtn { width: 78px; height: 78px; }
+    #useBtn { width: 58px; height: 58px; right: 100px; bottom: 70px; }
+    #dropBtn { width: 48px; height: 48px; right: 100px; }
+    #overlay { padding: calc(env(safe-area-inset-top, 0) + 8px) calc(env(safe-area-inset-right, 0) + 12px) calc(env(safe-area-inset-bottom, 0) + 8px) calc(env(safe-area-inset-left, 0) + 12px); }
+    #overlay h1 { font-size: 26px; margin-bottom: 8px; letter-spacing: 4px; }
+    #overlay .sub { font-size: 11px; margin-bottom: 8px; line-height: 1.4; }
+    #overlay button { padding: 8px 18px; font-size: 13px; margin: 2px; letter-spacing: 2px; }
+    .stat-row { margin: 2px 0; gap: 18px; font-size: 12px; }
   }
   /* 竖屏提示 */
   #portraitHint {
@@ -330,40 +371,28 @@
   <canvas id="game" width="640" height="400"></canvas>
 
   <div id="hud">
-    <div class="panel">
-      <div class="label">生命值 HP</div>
+    <div class="hud-tl">
+      <span class="floor-tag">F<span id="floor">1</span></span>
+      <span class="bank-tag">¥<span id="bank">0</span></span>
+      <span class="runval-tag" id="runvalTag">+¥<span id="runValue">0</span></span>
+    </div>
+    <div class="hud-tc">
       <div class="bar hp"><div id="hpBar" style="width:100%"></div></div>
-      <div class="label">护甲 ARMOR</div>
-      <div class="bar ar"><div id="arBar" style="width:0%"></div></div>
-      <div class="label">体力 STAM</div>
-      <div class="bar stam"><div id="stamBar" style="width:100%"></div></div>
-      <div class="stats">
-        <div class="stat"><span class="k">ATK</span><span class="v" id="atk">1</span></div>
-        <div class="stat"><span class="k">DEF</span><span class="v" id="def">0</span></div>
-        <div class="stat"><span class="k">HP</span><span class="v" id="maxHp">100</span></div>
+      <div class="hp-meta">
+        <span id="hpText">100</span>
+        <span class="dim">ATK<span id="atk">1</span> DEF<span id="def">0</span></span>
       </div>
-      <div class="keys">
-        <div class="key ky" id="ky">Y</div>
-        <div class="key kb" id="kb">B</div>
-        <div class="key kr" id="kr">R</div>
-      </div>
+      <div class="bar ar thin"><div id="arBar" style="width:0%"></div></div>
+      <div class="bar stam thin"><div id="stamBar" style="width:100%"></div></div>
     </div>
-    <div class="panel" style="text-align:center; min-width:160px;">
-      <div class="label">第 <span class="val" id="floor">1</span> 层</div>
-      <div style="margin:3px 0;">击杀: <span class="val" id="killCount">0</span></div>
-      <div style="margin:3px 0;">战利品: <span class="val" id="lootCount">0</span></div>
-      <div style="margin:3px 0;">局内价值: <span class="val rarity-4">¥<span id="runValue">0</span></span></div>
+    <div class="hud-tr">
+      <div id="keysWrap" class="keys-wrap"></div>
+      <div id="ammo" class="buffs-wrap"></div>
     </div>
-    <div class="panel" style="text-align:right;">
-      <div class="label">仓库 STASH</div>
-      <div style="font-size:16px; margin:3px 0;" class="rarity-4">¥<span id="bank">0</span></div>
-      <div class="label">最高层 BEST</div>
-      <div class="val" id="bestFloor">1</div>
-      <div style="margin-top:3px;">
-        <span class="label">武器强化</span><br>
-        <span class="val" id="ammo" style="font-size:11px;"></span>
-      </div>
-    </div>
+    <span id="killCount" hidden>0</span>
+    <span id="lootCount" hidden>0</span>
+    <span id="bestFloor" hidden>1</span>
+    <span id="maxHp" hidden>100</span>
   </div>
 
   <div id="extractBar">
@@ -1936,22 +1965,30 @@ function updateHUD(){
   document.getElementById('bank').textContent = bank;
   document.getElementById('floor').textContent = currentFloor;
   document.getElementById('bestFloor').textContent = bestFloor;
-  // Buff 显示（替换原弹药）
+  document.getElementById('hpText').textContent = Math.max(0, player.hp|0);
+  // 局内增益隐藏
+  const rvTag = document.getElementById('runvalTag');
+  if (rvTag) rvTag.classList.toggle('zero', runValue === 0);
+  // 钥匙 pill — 只显示有的
+  const kw = document.getElementById('keysWrap');
+  if (kw){
+    const parts = [];
+    if (pKeys.y > 0) parts.push(`<span class="key-pill kp-y">🗝<span class="ct">${pKeys.y}</span></span>`);
+    if (pKeys.b > 0) parts.push(`<span class="key-pill kp-b">🗝<span class="ct">${pKeys.b}</span></span>`);
+    if (pKeys.r > 0) parts.push(`<span class="key-pill kp-r">🗝<span class="ct">${pKeys.r}</span></span>`);
+    kw.innerHTML = parts.join('');
+  }
+  // Buff pill — 只显示有的
   const ammoEl = document.getElementById('ammo');
-  const parts = [];
-  if (runBuffs.dmg)      parts.push(`<span style="color:${BUFF_META.dmg.color}">⚔+${(runBuffs.dmg*100)|0}%</span>`);
-  if (runBuffs.fireRate) parts.push(`<span style="color:${BUFF_META.fireRate.color}">⚡+${(runBuffs.fireRate*100)|0}%</span>`);
-  if (runBuffs.spd)      parts.push(`<span style="color:${BUFF_META.spd.color}">➤+${(runBuffs.spd*100)|0}%</span>`);
-  if (runBuffs.crit)     parts.push(`<span style="color:${BUFF_META.crit.color}">★${(runBuffs.crit*100)|0}%</span>`);
-  if (runBuffs.pierce)   parts.push(`<span style="color:${BUFF_META.pierce.color}">⫸${runBuffs.pierce}</span>`);
-  ammoEl.innerHTML = parts.length ? parts.join(' ') : '<span style="color:#666">无强化</span>';
-  // 钥匙
-  const ky = document.getElementById('ky');
-  const kb = document.getElementById('kb');
-  const kr = document.getElementById('kr');
-  ky.textContent = pKeys.y; ky.classList.toggle('dim', pKeys.y === 0);
-  kb.textContent = pKeys.b; kb.classList.toggle('dim', pKeys.b === 0);
-  kr.textContent = pKeys.r; kr.classList.toggle('dim', pKeys.r === 0);
+  if (ammoEl){
+    const parts = [];
+    if (runBuffs.dmg)      parts.push(`<span class="buff-pill" style="color:${BUFF_META.dmg.color}">⚔+${(runBuffs.dmg*100)|0}%</span>`);
+    if (runBuffs.fireRate) parts.push(`<span class="buff-pill" style="color:${BUFF_META.fireRate.color}">⚡+${(runBuffs.fireRate*100)|0}%</span>`);
+    if (runBuffs.spd)      parts.push(`<span class="buff-pill" style="color:${BUFF_META.spd.color}">➤+${(runBuffs.spd*100)|0}%</span>`);
+    if (runBuffs.crit)     parts.push(`<span class="buff-pill" style="color:${BUFF_META.crit.color}">★${(runBuffs.crit*100)|0}%</span>`);
+    if (runBuffs.pierce)   parts.push(`<span class="buff-pill" style="color:${BUFF_META.pierce.color}">⫸${runBuffs.pierce}</span>`);
+    ammoEl.innerHTML = parts.join('');
+  }
 }
 
 const msgEl = document.getElementById('msg');
