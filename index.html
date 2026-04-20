@@ -2,7 +2,11 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0a0a0f">
 <title>像素搜打撤·魔塔 · Pixel Tower Extraction</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -208,34 +212,89 @@
     z-index: 20;
   }
   .touch-only #touch { display: block; }
+  .touch-only #help { display: none; }
+  .touch-only #inv { pointer-events: auto; bottom: auto; top: 8px; left: 50%; right: auto; transform: translateX(-50%); }
+  .touch-only .slot { width: 42px; height: 42px; }
+  .touch-only .slot .name { font-size: 7px; }
+
   #joystick {
-    position: absolute; left: 20px; bottom: 90px;
-    width: 110px; height: 110px;
-    background: rgba(80,120,100,0.2);
-    border: 2px solid rgba(120,180,140,0.4);
+    position: absolute; left: 18px; bottom: 18px;
+    width: 140px; height: 140px;
+    background: rgba(80,120,100,0.18);
+    border: 3px solid rgba(120,180,140,0.55);
     border-radius: 50%;
     pointer-events: auto;
+    touch-action: none;
   }
   #joyKnob {
-    position: absolute; left: 35px; top: 35px;
-    width: 40px; height: 40px;
-    background: rgba(180,220,200,0.5);
+    position: absolute; left: 45px; top: 45px;
+    width: 50px; height: 50px;
+    background: rgba(180,220,200,0.55);
     border-radius: 50%;
-    border: 2px solid rgba(180,220,200,0.8);
+    border: 3px solid rgba(180,220,200,0.9);
+    pointer-events: none;
   }
   .tbtn {
     position: absolute; pointer-events: auto;
-    background: rgba(80,120,100,0.3);
-    border: 2px solid rgba(120,180,140,0.5);
+    background: rgba(80,120,100,0.4);
+    border: 3px solid rgba(120,180,140,0.7);
     color: #fff; font-family: inherit;
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    font-size: 14px; letter-spacing: 1px;
+    font-size: 13px; letter-spacing: 1px; font-weight: bold;
     user-select: none;
+    text-shadow: 1px 1px 0 #000;
+    touch-action: none;
   }
-  #fireBtn { right: 25px; bottom: 90px; width: 90px; height: 90px; background: rgba(180,80,80,0.4); border-color: rgba(220,120,120,0.7); }
-  #reloadBtn { right: 130px; bottom: 100px; width: 60px; height: 60px; }
-  #useBtn { right: 130px; bottom: 30px; width: 60px; height: 60px; background: rgba(80,180,100,0.4); border-color: rgba(120,220,140,0.7); }
+  .tbtn:active { transform: scale(0.92); filter: brightness(1.4); }
+  .tbtn .sub { font-size: 9px; opacity: 0.7; line-height: 1; margin-top: 2px; }
+  #fireBtn   { right: 22px;  bottom: 22px;  width: 110px; height: 110px; background: rgba(200,70,70,0.55);  border-color: rgba(255,140,140,0.85); font-size: 16px; }
+  #useBtn    { right: 145px; bottom: 105px; width: 80px;  height: 80px;  background: rgba(80,180,100,0.55); border-color: rgba(140,240,170,0.9); }
+  #reloadBtn { right: 155px; bottom: 22px;  width: 70px;  height: 70px;  background: rgba(80,140,200,0.5); border-color: rgba(140,200,255,0.85); }
+  #dropBtn   { right: 235px; bottom: 22px;  width: 56px;  height: 56px;  background: rgba(120,80,80,0.45); border-color: rgba(200,120,120,0.7); font-size: 11px; }
+  #menuBtn   { left: 12px; top: 12px; width: 44px; height: 44px; background: rgba(50,60,70,0.7); border-color: rgba(150,180,200,0.7); font-size: 18px; pointer-events: auto; position: absolute; border-radius: 6px; display: none; }
+  .touch-only #menuBtn { display: flex; }
+
+  /* 手机版 HUD 紧凑 */
+  @media (max-width: 768px), (pointer: coarse) {
+    #hud {
+      padding: 6px 8px;
+      flex-wrap: wrap;
+      gap: 4px;
+      font-size: 10px;
+      pointer-events: none;
+    }
+    .panel { padding: 4px 6px; }
+    .bar { width: 110px; height: 8px; margin: 2px 0; }
+    .label { font-size: 9px; letter-spacing: 0; }
+    .stats { gap: 6px; font-size: 10px; margin-top: 2px; }
+    .key { width: 16px; height: 11px; font-size: 9px; }
+    #hud .panel:nth-child(1) { order: 1; flex: 0 0 auto; }
+    #hud .panel:nth-child(2) { order: 3; flex: 1 1 100%; display: flex; justify-content: space-around; padding: 3px 6px; min-width: 0 !important; }
+    #hud .panel:nth-child(2) > div { margin: 0 !important; font-size: 11px; }
+    #hud .panel:nth-child(2) .label { display: inline; }
+    #hud .panel:nth-child(3) { order: 2; flex: 0 0 auto; text-align: right; }
+    .touch-only #inv { top: 90px; }
+  }
+  /* 竖屏提示 */
+  #portraitHint {
+    position: fixed; inset: 0;
+    background: #0a0a0f;
+    display: none;
+    align-items: center; justify-content: center;
+    flex-direction: column;
+    z-index: 1000;
+    color: #5db080;
+    text-align: center;
+    padding: 30px;
+    font-size: 16px;
+    letter-spacing: 2px;
+  }
+  #portraitHint .icon { font-size: 56px; margin-bottom: 16px; animation: rot 2s infinite ease-in-out; }
+  @keyframes rot { 0%,100% { transform: rotate(0); } 50% { transform: rotate(90deg); } }
+  @media (orientation: portrait) and (pointer: coarse) and (max-width: 900px) {
+    .touch-only #portraitHint { display: flex; }
+  }
 </style>
 </head>
 <body>
@@ -294,11 +353,20 @@
     <span style="color:#5db080;">绿楼梯=撤离 · 红楼梯=上一层(更难) · 钥匙开门</span>
   </div>
 
+  <div id="menuBtn">≡</div>
+
   <div id="touch">
     <div id="joystick"><div id="joyKnob"></div></div>
     <div id="fireBtn" class="tbtn">射击</div>
+    <div id="useBtn" class="tbtn"><div>拾取/<br>撤离</div></div>
     <div id="reloadBtn" class="tbtn">换弹</div>
-    <div id="useBtn" class="tbtn">拾取</div>
+    <div id="dropBtn" class="tbtn">丢弃</div>
+  </div>
+
+  <div id="portraitHint">
+    <div class="icon">📱</div>
+    <div>请把手机横过来玩</div>
+    <div style="font-size:12px; color:#9ab; margin-top:10px;">Rotate to landscape</div>
   </div>
 
   <div id="shop"></div>
@@ -322,7 +390,7 @@ const cv = document.getElementById('game');
 const ctx = cv.getContext('2d');
 ctx.imageSmoothingEnabled = false;
 
-const isTouch = ('ontouchstart' in window) && (window.innerWidth < 900);
+const isTouch = ('ontouchstart' in window) && (window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 900);
 if (isTouch) document.body.classList.add('touch-only');
 
 function resize(){
@@ -386,21 +454,55 @@ joyEl.addEventListener('touchstart', jStart);
 joyEl.addEventListener('touchmove', jMove);
 joyEl.addEventListener('touchend', jEnd);
 
-document.getElementById('fireBtn').addEventListener('touchstart', e => { mouse.down = true; e.preventDefault(); });
-document.getElementById('fireBtn').addEventListener('touchend', e => { mouse.down = false; e.preventDefault(); });
-document.getElementById('reloadBtn').addEventListener('touchstart', e => { tryReload(); e.preventDefault(); });
-document.getElementById('useBtn').addEventListener('touchstart', e => { tryInteract(); e.preventDefault(); });
+// touchInteract: 持续按住交互按钮 — 长按楼梯撤离/上楼时使用
+let touchInteract = false;
 
-// 触屏自动瞄准最近敌人
+function bindHold(el, onStart, onEnd){
+  el.addEventListener('touchstart', e => { onStart(); e.preventDefault(); }, { passive: false });
+  el.addEventListener('touchend',   e => { onEnd();   e.preventDefault(); }, { passive: false });
+  el.addEventListener('touchcancel',e => { onEnd();   e.preventDefault(); }, { passive: false });
+  // 桌面调试用 mouse 事件
+  el.addEventListener('mousedown',  e => { onStart(); e.preventDefault(); });
+  el.addEventListener('mouseup',    e => { onEnd();   e.preventDefault(); });
+  el.addEventListener('mouseleave', e => onEnd());
+}
+
+bindHold(document.getElementById('fireBtn'),
+  () => { mouse.down = true; },
+  () => { mouse.down = false; });
+
+bindHold(document.getElementById('useBtn'),
+  () => { touchInteract = true; tryInteract(); },
+  () => { touchInteract = false; });
+
+document.getElementById('reloadBtn').addEventListener('touchstart', e => { tryReload(); e.preventDefault(); }, { passive: false });
+document.getElementById('reloadBtn').addEventListener('mousedown', e => { tryReload(); e.preventDefault(); });
+document.getElementById('dropBtn').addEventListener('touchstart', e => { dropEquipped(); e.preventDefault(); }, { passive: false });
+document.getElementById('dropBtn').addEventListener('mousedown', e => { dropEquipped(); e.preventDefault(); });
+
+// 菜单按钮：暂停 + 显示主菜单（可重置/查看属性）
+document.getElementById('menuBtn').addEventListener('click', () => {
+  if (gameState !== 'play') return;
+  gameState = 'paused';
+  showOverlay('暂 停', '继续游戏不会丢失任何进度');
+});
+
+// 触屏自动瞄准最近敌人；没有敌人时朝移动方向
+let lastMoveDir = 0;
 function autoAim(){
   if (!isTouch) return;
   let best = null, bd = Infinity;
   for (const e of enemies){
+    if (!hasLineOfSight(player.x, player.y, e.x, e.y)) continue;
     const d = Math.hypot(e.x - player.x, e.y - player.y);
     if (d < bd) { bd = d; best = e; }
   }
   if (best){
     mouse.worldX = best.x; mouse.worldY = best.y;
+  } else {
+    // 朝移动方向
+    mouse.worldX = player.x + Math.cos(lastMoveDir) * 80;
+    mouse.worldY = player.y + Math.sin(lastMoveDir) * 80;
   }
 }
 
@@ -1047,15 +1149,7 @@ function triggerExtractHold(){
   // 在 update 里用 keys['e'] 持续判定
 }
 
-function triggerStairsUp(){
-  if (!keys['e'] && !touchInteract) return;
-  if (extractTimer < 1) {
-    upTimerActive = true;
-  }
-}
-let upTimerActive = false;
 let upTimer = 0;
-let touchInteract = false;
 
 function extractRaid(){
   bank += runValue;
@@ -1159,27 +1253,20 @@ function addItemToInv(item){
   return true;
 }
 
-function buyShopItem(it, row){
+function buyShopItem(it){
   if (bank < it.price){ showMsg('金币不足', 700); return; }
-  // 武器/药品需要背包空间
-  if (it.name.includes('钥匙')||it.name.includes('宝石')||it.name.includes('弹')||it.name.includes('护甲')){
-    bank -= it.price;
-    it.action();
-    save();
-    showMsg(`购买 ${it.name}`, 700, '#5db080');
-    openShop(); openShop = openShop; // 刷新
-    closeShop(); openShop();
-    return;
+  const noSlotNeeded = ['钥匙','宝石','弹','护甲'].some(k => it.name.includes(k));
+  if (!noSlotNeeded){
+    let hasSlot = false;
+    for (let i=0; i<INV_SIZE; i++) if (!inv[i]) { hasSlot = true; break; }
+    if (!hasSlot){ showMsg('背包已满', 800); return; }
   }
-  // 占栏位类
-  let hasSlot = false;
-  for (let i=0; i<INV_SIZE; i++) if (!inv[i]) { hasSlot = true; break; }
-  if (!hasSlot){ showMsg('背包已满', 800); return; }
   bank -= it.price;
   it.action();
   save(); updateHUD();
   showMsg(`购买 ${it.name}`, 700, '#5db080');
-  closeShop(); openShop();
+  // 刷新商店面板
+  shopOpen = false; openShop();
 }
 
 // ============ 主循环 ============
@@ -1214,6 +1301,7 @@ function update(dt){
     const m = Math.hypot(dx,dy);
     if (m > 1) { dx /= m; dy /= m; }
     movePlayer(dx * sp * dt, dy * sp * dt);
+    lastMoveDir = Math.atan2(dy, dx);
   }
   // 朝向
   const camX = player.x - VIEW_W/2, camY = player.y - VIEW_H/2;
@@ -1800,6 +1888,10 @@ function renderInv(){
     } else {
       div.innerHTML = `<div style="color:#444">${i+1}</div>`;
     }
+    div.style.cursor = 'pointer';
+    div.style.pointerEvents = 'auto';
+    div.addEventListener('click', () => selectSlot(i));
+    div.addEventListener('touchstart', e => { selectSlot(i); e.preventDefault(); }, { passive: false });
     invEl.appendChild(div);
   }
 }
@@ -1860,8 +1952,9 @@ const resetBtn = document.getElementById('resetBtn');
 
 function showOverlay(title, subtext){
   ovTitle.textContent = title;
-  ovSub.innerHTML = subtext + (subtext ? '<br><br>' : '') +
-    '<span style="color:#5db080;">下一局从第 ' + currentFloor + ' 层开始</span>';
+  let extra = '';
+  if (gameState !== 'paused') extra = '<span style="color:#5db080;">下一局从第 ' + currentFloor + ' 层开始</span>';
+  ovSub.innerHTML = subtext + (subtext ? '<br><br>' : '') + extra;
   ovStats.innerHTML = `
     <div class="panel" style="min-width:280px; margin-bottom:14px;">
       <div class="stat-row"><span>仓库</span><span class="v">¥${bank}</span></div>
@@ -1870,12 +1963,22 @@ function showOverlay(title, subtext){
       <div class="stat-row"><span>钥匙 Y/B/R</span><span class="v">${pKeys.y} / ${pKeys.b} / ${pKeys.r}</span></div>
     </div>
   `;
-  startBtn.textContent = gameState === 'menu' ? '开始进入战区' : (gameState === 'dead' ? '重新进入第 1 层' : '继续下一局');
+  if (gameState === 'paused') startBtn.textContent = '继续游戏';
+  else if (gameState === 'menu') startBtn.textContent = '开始进入战区';
+  else if (gameState === 'dead') startBtn.textContent = '重新进入第 1 层';
+  else startBtn.textContent = '继续下一局';
   resetBtn.style.display = bank > 0 || pAtk > 1 || pDef > 0 || maxHpBonus > 0 ? 'inline-block' : 'none';
   overlay.style.display = 'flex';
 }
 
-startBtn.addEventListener('click', () => startFloor(true));
+startBtn.addEventListener('click', () => {
+  if (gameState === 'paused'){
+    overlay.style.display = 'none';
+    gameState = 'play';
+    return;
+  }
+  startFloor(true);
+});
 resetBtn.addEventListener('click', () => {
   if (!confirm('确定重置所有进度？仓库金币、属性、楼层都会清零。')) return;
   localStorage.removeItem('pe_save_v2');
